@@ -21,12 +21,13 @@
 This environment is non-interactive, so these steps are run manually in a
 browser; the downloaded CSVs are placed untouched in `data/raw/`.
 
-1. Go to **https://www.transtats.bts.gov/** → **Data Finder** → **By Mode:
-   Aviation** → **Air Carriers**, then open the **Data Tables** list for Air
-   Carriers (direct: https://www.transtats.bts.gov/tables.asp?QO_VQ=EEE&QO_anzr=Nv4 ).
-2. Find **"T-100 Segment (All Carriers)"** in the list and click its
-   **Download** link. Confirm the resulting page's heading says **T-100 Segment
-   (All Carriers)** (not *Market*).
+1. Open the **T-100 Segment (All Carriers)** download form directly:
+   **https://www.transtats.bts.gov/DL_SelectFields.asp?gnoyr_VQ=FMG&QO_fu146_anzr=Nv4%20Pn44vr45**
+   (If that link ever changes: go to the Air Carriers data-tables list at
+   https://www.transtats.bts.gov/tables.asp?QO_VQ=EEE&QO_anzr=Nv4 and click
+   **Download** next to "T-100 Segment (All Carriers)". Note `gnoyr_VQ=FMG` is
+   the Segment table; `FMF` is the *Market* table — do not use Market.)
+2. Confirm the page heading says **T-100 Segment (All Carriers)** (not *Market*).
 3. **Select fields** (check these boxes; or use "Select all fields" to be safe):
    - Summaries: **Freight**, **Mail**, Passengers, Distance, DeparturesPerformed
      (Payload/Seats optional)
