@@ -197,6 +197,6 @@ content rules (no AI/tool mentions anywhere in the repo).
 
 ---
 
-**STATUS: awaiting approval before building.** On approval I will proceed to
-Step 3 (BTS download, documented manually) and build the pipeline via the
-coder → verifier workflow.
+**STATUS: approved.** Parameters locked: 2011–2025 range, top-5 hubs, data
+downloaded manually to `data/raw/`. Next: Step 3 onward once the raw files are
+present.

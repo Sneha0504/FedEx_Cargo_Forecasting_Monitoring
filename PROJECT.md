@@ -51,7 +51,6 @@ docs/data_sources.md.
 
 ## Build steps (summary)
 
-0. Read all `.claude` skills first; follow the subagent-routing policy.
 1. Folder setup + GitHub repo (public).
 2. docs/PLAN.md, then PAUSE for approval.
 3. Download T-100 data to data/raw (document exact steps + date range).

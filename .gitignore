@@ -24,9 +24,7 @@ outputs/*.xlsx
 .DS_Store
 Thumbs.db
 
-# Editor / IDE / assistant config
-.claude/
-.cursor/
+# Editor / IDE and OS cruft (not part of the project)
 .idea/
 .vscode/
 *.swp

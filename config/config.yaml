@@ -5,10 +5,18 @@
 data:
   raw_dir: data/raw
   processed_dir: data/processed
+  network_series_file: network_monthly.csv   # processed monthly network series (backtest input)
+  backtest_results_file: backtest_results.csv  # persisted backtest output (monitoring input)
 
 hubs:
   # Hub selection: top-N airports by total historical FedEx freight.
   top_n: 5
+
+forecasting:
+  trend_window: 3        # trailing months averaged for the seasonal-naive-trend YoY term
+  sarima:
+    order: [1, 1, 1]            # non-seasonal (p, d, q)
+    seasonal_order: [0, 1, 1, 12]  # seasonal (P, D, Q, s); s is the period
 
 backtest:
   eval_months: 36        # length of the rolling out-of-sample evaluation period
