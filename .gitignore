@@ -1,0 +1,32 @@
+# Raw downloaded BTS files (large, untouched)
+data/raw/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Excel report (built locally, not committed)
+outputs/*.xlsx
+~$*.xlsx
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / IDE / assistant config
+.claude/
+.cursor/
+.idea/
+.vscode/
+*.swp

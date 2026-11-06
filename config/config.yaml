@@ -1,0 +1,19 @@
+# Configuration for the FedEx cargo forecasting & monitoring pipeline.
+# Values here are initial placeholders; they are finalized in docs/PLAN.md
+# before the pipeline is built.
+
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed
+
+hubs:
+  # Hub selection: top-N airports by total historical FedEx freight.
+  top_n: 5
+
+backtest:
+  eval_months: 36        # length of the rolling out-of-sample evaluation period
+  min_train_months: 48   # minimum months of history before the first forecast
+
+monitoring:
+  error_window: 12       # trailing window of prior errors for the normal range
+  threshold_sigma: 3.0   # flag when error exceeds window mean +/- k * std
