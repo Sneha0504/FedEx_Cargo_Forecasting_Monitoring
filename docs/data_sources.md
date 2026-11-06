@@ -61,12 +61,34 @@ add **2026 year-to-date**.
   handled in the data-quality step and excluded from the evaluation window if
   partial.
 
-## To be recorded after download (fill in once files are in `data/raw/`)
+## Recorded after download
 
-- [ ] Exact file names saved to `data/raw/`
-- [ ] Row count per file and total
-- [ ] Actual earliest and latest YEAR-MONTH present
-- [ ] Confirmed FedEx `UniqueCarrier` code(s) found (expected `FX`; note any
-      legacy/alternate codes)
-- [ ] The exact column header names as they appear in the CSV (so the pipeline
-      maps them correctly)
+- **Files:** 16 zips named `T_T100_SEGMENT_ALL_CARRIER_<timestamp>.zip`, each
+  containing one `T_T100_SEGMENT_ALL_CARRIER.csv` for one calendar year.
+  Extracted to uniquely-named `data/raw/seg_<timestamp>.csv`. (All of `data/raw/`
+  is git-ignored.)
+- **Total data rows:** 7,364,085 (all carriers, all segments).
+- **Date range downloaded:** January 2011 – July 2026. Years 2011–2025 are
+  complete (12 months each); **2026 is partial (Jan–Jul, 7 months)** because BTS
+  withholds the most recent ~3 months of domestic data.
+- **Analysis window: 2011–2025 (180 complete months).** The partial 2026 tail
+  is excluded entirely (complete calendar years only) so it is not read as a
+  real decline; 332,658 rows with `YEAR = 2026` are dropped. The window bounds
+  are config-driven (`data.start_year` / `data.end_year`) and applied in SQL.
+  See data-quality report rule 6.
+- **FedEx carrier code:** a single code **`FX`** ("Federal Express Corporation")
+  across the entire 2011–2026 span — no legacy/alternate codes to reconcile.
+  278,842 FedEx segment rows; ~202.2 billion lbs of FedEx freight in total.
+- **Column headers (actual, UPPER_SNAKE):** `DEPARTURES_PERFORMED`, `PASSENGERS`,
+  `FREIGHT`, `MAIL`, `DISTANCE`, `UNIQUE_CARRIER`, `UNIQUE_CARRIER_NAME`,
+  `CARRIER`, `CARRIER_NAME`, `ORIGIN`, `ORIGIN_CITY_NAME`, `ORIGIN_STATE_ABR`,
+  `ORIGIN_COUNTRY`, `ORIGIN_COUNTRY_NAME`, `DEST`, `DEST_CITY_NAME`,
+  `DEST_STATE_ABR`, `DEST_STATE_NM`, `DEST_COUNTRY`, `DEST_COUNTRY_NAME`, `YEAR`,
+  `MONTH`, `DATA_SOURCE`.
+- **`DATA_SOURCE` values** (scope: all years 2011–2026 incl. partial 2026;
+  sum to the 7,364,085 total above — the data-quality report's rule-5 counts are
+  the in-window 2011–2025 subset and so are smaller): `DU` (domestic, US carrier)
+  5,945,910; `DF` (domestic, foreign) 46,504; `IU` (international, US carrier)
+  790,797; `IF` (international, foreign) 580,874. Domestic vs international splits
+  on the first character (D vs I).
+- **Freight quality (all-carrier):** 0 negative values, 0 nulls.

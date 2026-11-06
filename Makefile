@@ -20,7 +20,7 @@ setup:
 	$(PYTHON) -m pip install -r requirements.txt
 
 aggregate:
-	$(PYTHON) src/aggregate.py
+	$(PYTHON) -m src.aggregate
 
 backtest:
 	$(PYTHON) -m src.backtest

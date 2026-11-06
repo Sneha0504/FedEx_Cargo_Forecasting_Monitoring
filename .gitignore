@@ -20,6 +20,9 @@ dist/
 outputs/*.xlsx
 ~$*.xlsx
 
+# Regenerable backtest output (produced by `make backtest`)
+data/processed/backtest_results.csv
+
 # OS
 .DS_Store
 Thumbs.db

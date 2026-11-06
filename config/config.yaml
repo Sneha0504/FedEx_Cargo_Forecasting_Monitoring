@@ -4,12 +4,22 @@
 
 data:
   raw_dir: data/raw
+  raw_glob: data/raw/seg_*.csv            # glob of the per-year BTS segment CSVs
   processed_dir: data/processed
   network_series_file: network_monthly.csv   # processed monthly network series (backtest input)
   backtest_results_file: backtest_results.csv  # persisted backtest output (monitoring input)
+  # Analysis window: complete calendar years only. 2026 is excluded because BTS
+  # publishes only Jan-Jul 2026 (the ~3-month reporting lag), so it is not a
+  # complete year.
+  start_year: 2011
+  end_year: 2025
+
+# BTS unique-carrier code for Federal Express Corporation. A single code (FX)
+# spans the whole period; confirmed as a data-quality rule rather than assumed.
+fedex_carrier_code: FX
 
 hubs:
-  # Hub selection: top-N airports by total historical FedEx freight.
+  # Hub selection: top-N airports by total historical FedEx origin freight.
   top_n: 5
 
 forecasting:

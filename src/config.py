@@ -23,12 +23,15 @@ DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent.parent / "config" / "confi
 
 @dataclass(frozen=True)
 class DataConfig:
-    """Filesystem locations and filenames for raw and processed data."""
+    """Filesystem locations, filenames, and the analysis window."""
 
     raw_dir: str
+    raw_glob: str
     processed_dir: str
     network_series_file: str
     backtest_results_file: str
+    start_year: int
+    end_year: int
 
 
 @dataclass(frozen=True)
@@ -75,6 +78,7 @@ class Config:
     """Top-level typed configuration for the pipeline."""
 
     data: DataConfig
+    fedex_carrier_code: str
     hubs: HubsConfig
     forecasting: ForecastingConfig
     backtest: BacktestConfig
@@ -108,10 +112,14 @@ def get_config(path: str | Path | None = None) -> Config:
     return Config(
         data=DataConfig(
             raw_dir=raw["data"]["raw_dir"],
+            raw_glob=raw["data"]["raw_glob"],
             processed_dir=raw["data"]["processed_dir"],
             network_series_file=raw["data"]["network_series_file"],
             backtest_results_file=raw["data"]["backtest_results_file"],
+            start_year=int(raw["data"]["start_year"]),
+            end_year=int(raw["data"]["end_year"]),
         ),
+        fedex_carrier_code=str(raw["fedex_carrier_code"]),
         hubs=HubsConfig(top_n=int(raw["hubs"]["top_n"])),
         forecasting=ForecastingConfig(
             trend_window=int(raw["forecasting"]["trend_window"]),
