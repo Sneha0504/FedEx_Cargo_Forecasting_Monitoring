@@ -20,8 +20,16 @@ ran (no fabricated numbers).
   domestic/international monthly series (2011–2025, 180 months; 2026 excluded).
   An independent review recomputed every key figure directly from the raw CSVs
   and matched the pipeline exactly (max difference 0).
-- Still to do: break detection on the real series, the monitoring write-up, the
-  Excel report, the Plotly dashboard, and the README with real numbers.
+- Built the multi-level backtest, structural-break detection, and
+  forecast-error monitoring on the real series (independently verified); then,
+  after a reviewer flagged that the break test's p-values ignored seasonality,
+  reworked it to deseasonalize first and use a moving-block bootstrap, and
+  reframed the monitoring narrative honestly (see caveats).
+- Built the Excel live-formula report and the self-contained Plotly dashboard,
+  published the dashboard to GitHub Pages
+  (https://sneha0504.github.io/FedEx_Cargo_Forecasting_Monitoring/), captured a
+  screenshot with headless Chrome, and wrote the public README + this memo with
+  only script-derived numbers.
 
 ## Bugs found and how they were caught
 
@@ -83,9 +91,22 @@ SARIMA minimum-length guard (≥ 2× the seasonal period) before fitting.
   network/hub/domestic-intl series plus the network backtest have been computed
   and independently re-verified against the raw files. Break detection, Excel,
   dashboard, and the README numbers are still to come.
-- **The 2024 FedEx–USPS contract break is a hypothesis, not a confirmed
-  finding.** It is an externally-sourced business event to be tested against the
-  data in Step 7; it must not be stated as fact until the break test is run.
+- **The Sept 2024 domestic drop is NOT a certified structural break.** A
+  seasonality-aware break test with a moving-block bootstrap does not certify it
+  on only ~16 post-months; the certified domestic break is April 2021. The
+  forecast-error monitor flags Sept 2024 operationally, and that month coincides
+  with the FedEx–USPS contract expiry (public reporting), but no causal claim is
+  made and the break is explicitly labeled a "regime-change candidate".
+- **The +2-month monitoring lead is a single illustrative episode (n=1)**, not
+  an estimated average lead time.
+- **scikit-learn / gradient boosting was NOT used.** The plan listed GBM as an
+  optional stretch model; SARIMA satisfies the "more complex model" requirement,
+  so GBM was not implemented and scikit-learn was removed from requirements (only
+  tools that actually ran are listed).
+- **Excel formula errors were checked by static audit, not an automated
+  recalculation** — LibreOffice/soffice is not installed, so no headless recalc
+  ran. The builder would run a true recalc + error scan if soffice were present;
+  the workbook's Notes tab documents this honestly.
 - The real-fit SARIMA test emits one deterministic statsmodels
   ConvergenceWarning; it is not a failure (the fit still returns a valid value).
 - Excel zero-formula-error verification method (headless recalc vs documented

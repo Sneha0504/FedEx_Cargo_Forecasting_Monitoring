@@ -227,9 +227,15 @@ def build_hub_figure(data: DashboardData) -> go.Figure:
     _base_layout(fig, titles[0])
     fig.update_layout(
         showlegend=False,
-        height=520,
+        height=560,
         yaxis_title="Freight (M lbs)",
         xaxis_title="Month",
+        # Extra top margin creates a dedicated control band above the title so
+        # the hub-selector dropdown no longer overlaps the (long) title text.
+        margin={"l": 70, "r": 30, "t": 130, "b": 50},
+        # Pin the title just above the plotting area, in the lower part of the
+        # top margin, leaving the band above it free for the selector controls.
+        title={"y": 1.0, "yref": "paper", "yanchor": "bottom"},
         updatemenus=[
             {
                 "buttons": buttons,
@@ -237,9 +243,10 @@ def build_hub_figure(data: DashboardData) -> go.Figure:
                 "showactive": True,
                 "x": 0.0,
                 "xanchor": "left",
-                "y": 1.16,
+                # Sits in the upper part of the top margin, clear of the title.
+                "y": 1.26,
                 "yanchor": "top",
-                "pad": {"r": 10, "t": 6},
+                "pad": {"r": 10, "t": 0},
                 "bgcolor": "#F2F2F2",
                 "bordercolor": "#CCCCCC",
             }
@@ -250,9 +257,10 @@ def build_hub_figure(data: DashboardData) -> go.Figure:
                 "showarrow": False,
                 "x": 0.0,
                 "xref": "paper",
-                "y": 1.22,
+                "y": 1.33,
                 "yref": "paper",
                 "xanchor": "left",
+                "yanchor": "top",
                 "font": {"size": 12, "color": "#555"},
             }
         ],
