@@ -32,10 +32,10 @@ monitor:
 	$(PYTHON) -m src.monitoring
 
 excel:
-	$(PYTHON) src/build_excel_report.py
+	$(PYTHON) -m src.build_excel_report
 
 dashboard:
-	$(PYTHON) src/build_dashboard.py
+	$(PYTHON) -m src.build_dashboard
 
 lint:
 	$(PYTHON) -m ruff check src tests conftest.py
