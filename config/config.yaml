@@ -7,7 +7,13 @@ data:
   raw_glob: data/raw/seg_*.csv            # glob of the per-year BTS segment CSVs
   processed_dir: data/processed
   network_series_file: network_monthly.csv   # processed monthly network series (backtest input)
-  backtest_results_file: backtest_results.csv  # persisted backtest output (monitoring input)
+  backtest_results_file: backtest_results.csv  # persisted network backtest output (kept for continuity)
+  hub_series_file: hub_monthly.csv             # processed monthly hub series (per-hub backtest input)
+  network_domestic_intl_file: network_domestic_intl.csv  # domestic/intl split (break-detection input)
+  backtest_accuracy_file: backtest_accuracy.csv    # per level x method WAPE/MAPE
+  backtest_forecasts_file: backtest_forecasts.csv  # per-month one-step-ahead forecasts, all levels
+  break_analysis_file: break_analysis.csv          # structural-break results (domestic/intl)
+  monitoring_file: monitoring.csv                  # point-in-time monitoring output
   # Analysis window: complete calendar years only. 2026 is excluded because BTS
   # publishes only Jan-Jul 2026 (the ~3-month reporting lag), so it is not a
   # complete year.
@@ -35,3 +41,14 @@ backtest:
 monitoring:
   error_window: 12       # trailing window of prior errors for the normal range
   threshold_sigma: 3.0   # flag when error exceeds window mean +/- k * std
+  plain_report_sigma: 2.0  # control-limit multiple for the plain YoY volume review baseline
+
+break:
+  # Structural-break scan: binary segmentation (recursive sup-Chow / Quandt-Andrews).
+  trim_fraction: 0.15      # fraction trimmed from each end of a segment (central scan)
+  bootstrap_reps: 1000     # residual-bootstrap reps for the sup-F p-value
+  random_seed: 42          # base seed for the bootstrap (reproducible p-values)
+  max_breaks: 3            # maximum breaks reported per series
+  min_segment_months: 24   # a segment shorter than this is not split further
+  significance_level: 0.05 # recurse/record only while the block-bootstrap p-value is below this
+  block_length: 12         # moving-block bootstrap block length (months) for the conservative p-value

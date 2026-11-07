@@ -23,7 +23,13 @@ DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent.parent / "config" / "confi
 
 @dataclass(frozen=True)
 class DataConfig:
-    """Filesystem locations, filenames, and the analysis window."""
+    """Filesystem locations, filenames, and the analysis window.
+
+    The trailing filename fields have defaults so existing callers that
+    construct a :class:`DataConfig` with only the original arguments keep
+    working; they name the multi-level backtest, break-detection, and
+    monitoring outputs written by the analysis-results stage.
+    """
 
     raw_dir: str
     raw_glob: str
@@ -32,6 +38,12 @@ class DataConfig:
     backtest_results_file: str
     start_year: int
     end_year: int
+    hub_series_file: str = "hub_monthly.csv"
+    network_domestic_intl_file: str = "network_domestic_intl.csv"
+    backtest_accuracy_file: str = "backtest_accuracy.csv"
+    backtest_forecasts_file: str = "backtest_forecasts.csv"
+    break_analysis_file: str = "break_analysis.csv"
+    monitoring_file: str = "monitoring.csv"
 
 
 @dataclass(frozen=True)
@@ -67,10 +79,37 @@ class BacktestConfig:
 
 @dataclass(frozen=True)
 class MonitoringConfig:
-    """Forecast-error monitoring settings."""
+    """Forecast-error monitoring settings.
+
+    ``plain_report_sigma`` is the control-limit multiple for the plain
+    year-over-year volume review used as the lead-time baseline.
+    """
 
     error_window: int
     threshold_sigma: float
+    plain_report_sigma: float = 2.0
+
+
+@dataclass(frozen=True)
+class BreakConfig:
+    """Structural-break (binary-segmentation sup-Chow) scan settings.
+
+    ``trim_fraction`` is the fraction of each segment trimmed from both ends so
+    the sup-F scan only considers candidate break months in its central portion
+    (standard Andrews trimming). ``bootstrap_reps`` controls the residual
+    bootstrap used for the sup-F p-value. Binary segmentation recurses into the
+    sub-segments around each detected break, stopping when a segment is shorter
+    than ``min_segment_months``, its bootstrap p-value is at or above
+    ``significance_level``, or ``max_breaks`` breaks have been found.
+    """
+
+    trim_fraction: float = 0.15
+    bootstrap_reps: int = 1000
+    random_seed: int = 42
+    max_breaks: int = 3
+    min_segment_months: int = 24
+    significance_level: float = 0.05
+    block_length: int = 12
 
 
 @dataclass(frozen=True)
@@ -83,6 +122,7 @@ class Config:
     forecasting: ForecastingConfig
     backtest: BacktestConfig
     monitoring: MonitoringConfig
+    break_detection: BreakConfig = BreakConfig()
 
 
 def get_config(path: str | Path | None = None) -> Config:
@@ -109,15 +149,31 @@ def get_config(path: str | Path | None = None) -> Config:
     order = tuple(int(v) for v in sarima_raw["order"])
     seasonal_order = tuple(int(v) for v in sarima_raw["seasonal_order"])
 
+    data_raw = raw["data"]
+    break_raw = raw.get("break", {}) or {}
     return Config(
         data=DataConfig(
-            raw_dir=raw["data"]["raw_dir"],
-            raw_glob=raw["data"]["raw_glob"],
-            processed_dir=raw["data"]["processed_dir"],
-            network_series_file=raw["data"]["network_series_file"],
-            backtest_results_file=raw["data"]["backtest_results_file"],
-            start_year=int(raw["data"]["start_year"]),
-            end_year=int(raw["data"]["end_year"]),
+            raw_dir=data_raw["raw_dir"],
+            raw_glob=data_raw["raw_glob"],
+            processed_dir=data_raw["processed_dir"],
+            network_series_file=data_raw["network_series_file"],
+            backtest_results_file=data_raw["backtest_results_file"],
+            start_year=int(data_raw["start_year"]),
+            end_year=int(data_raw["end_year"]),
+            hub_series_file=str(data_raw.get("hub_series_file", "hub_monthly.csv")),
+            network_domestic_intl_file=str(
+                data_raw.get("network_domestic_intl_file", "network_domestic_intl.csv")
+            ),
+            backtest_accuracy_file=str(
+                data_raw.get("backtest_accuracy_file", "backtest_accuracy.csv")
+            ),
+            backtest_forecasts_file=str(
+                data_raw.get("backtest_forecasts_file", "backtest_forecasts.csv")
+            ),
+            break_analysis_file=str(
+                data_raw.get("break_analysis_file", "break_analysis.csv")
+            ),
+            monitoring_file=str(data_raw.get("monitoring_file", "monitoring.csv")),
         ),
         fedex_carrier_code=str(raw["fedex_carrier_code"]),
         hubs=HubsConfig(top_n=int(raw["hubs"]["top_n"])),
@@ -135,6 +191,18 @@ def get_config(path: str | Path | None = None) -> Config:
         monitoring=MonitoringConfig(
             error_window=int(raw["monitoring"]["error_window"]),
             threshold_sigma=float(raw["monitoring"]["threshold_sigma"]),
+            plain_report_sigma=float(
+                raw["monitoring"].get("plain_report_sigma", 2.0)
+            ),
+        ),
+        break_detection=BreakConfig(
+            trim_fraction=float(break_raw.get("trim_fraction", 0.15)),
+            bootstrap_reps=int(break_raw.get("bootstrap_reps", 1000)),
+            random_seed=int(break_raw.get("random_seed", 42)),
+            max_breaks=int(break_raw.get("max_breaks", 3)),
+            min_segment_months=int(break_raw.get("min_segment_months", 24)),
+            significance_level=float(break_raw.get("significance_level", 0.05)),
+            block_length=int(break_raw.get("block_length", 12)),
         ),
     )
 

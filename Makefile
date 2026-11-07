@@ -26,7 +26,7 @@ backtest:
 	$(PYTHON) -m src.backtest
 
 break:
-	$(PYTHON) src/break_detection.py
+	$(PYTHON) -m src.break_detection
 
 monitor:
 	$(PYTHON) -m src.monitoring
